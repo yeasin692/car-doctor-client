@@ -1,43 +1,47 @@
 import { useContext } from "react";
-import { useLoaderData } from "react-router-dom";
 import { AuthContext } from "../../Provider/AuthProvider";
+import { useLoaderData } from "react-router-dom";
 
-const BookService = () => {
-  const service = useLoaderData();
-  const { title, _id, price, img } = service;
-  const {user} = useContext(AuthContext);
 
-  const handleBookService = event => {
+const BookService = ()  => {
+  const services = useLoaderData();
+  const { title, _id, price, img } = services;
+  const { user } = useContext(AuthContext);
+
+  const handleBookService = (event) => {
+    event.preventDefault(); // Prevent the default form submission behavior
+
     const form = event.target;
     const name = form.name.value;
     const date = form.date.value;
     const email = user?.email;
     const booking = {
-        customerName: name,
-        email,
-        img,
-        date,
-        service: title,
-        service_id: _id,
-        price: price
-    }
+      customerName: name,
+      email,
+      img,
+      date,
+      service: title,
+      service_id: _id,
+      price: price,
+    };
+
     console.log(booking);
 
     fetch("http://localhost:5000/bookings", {
-        method: 'POST',
-        headers: {
-            'content-type': 'application/json'
-        },
-        body: JSON.stringify(booking)
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(booking),
     })
-    .then(res => res.json())
-    .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         console.log(data);
-        if(data.insertedId){
-            alert('services book successfully')
+        if (data.insertedId) {
+          alert("Service booked successfully");
         }
-    })
-  }
+      });
+  };
 
   return (
     <div>
@@ -50,7 +54,7 @@ const BookService = () => {
                 <span className="label-text">Name</span>
               </label>
               <input
-                type="name"
+                type="text" // Use type="text" for the name input
                 name="name"
                 defaultValue={user?.name}
                 placeholder="Name"
@@ -64,7 +68,7 @@ const BookService = () => {
               </label>
               <input
                 type="date"
-                name="name"
+                name="date"
                 placeholder="Date"
                 className="input input-bordered"
                 required
@@ -78,7 +82,7 @@ const BookService = () => {
                 type="email"
                 name="email"
                 defaultValue={user?.email}
-                placeholder="email"
+                placeholder="Email"
                 className="input input-bordered"
                 required
               />
@@ -89,8 +93,8 @@ const BookService = () => {
               </label>
               <input
                 type="text"
-                defaultValue={'$' + price}
-               
+                defaultValue={"$" + price}
+                readOnly
                 className="input input-bordered"
                 required
               />
